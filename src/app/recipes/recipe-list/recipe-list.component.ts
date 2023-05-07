@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { Recipe } from '../recipe.model';
 
 @Component({
@@ -12,6 +12,17 @@ export class RecipeListComponent {
       "Garlic Bread",
       "Just take a bread and eat it with chopped garlic",
       "https://www.schaer.com/sites/default/files/styles/panoramic_fullwidth/public/2922_Garlic%20Bread%2016-9.webp?itok=pEP-O8m0"
+    ),
+    new Recipe(
+      "Another Bread",
+      "Just take a bread and eat it with chopped garlic",
+      "https://www.schaer.com/sites/default/files/styles/panoramic_fullwidth/public/2922_Garlic%20Bread%2016-9.webp?itok=pEP-O8m0"
     )
   ];
+
+  @Output() changeCurrentRecipe = new EventEmitter<Recipe>();
+
+  updateCurrentRecipe(recipe: Recipe) {
+    this.changeCurrentRecipe.emit(recipe);
+  }
 }
