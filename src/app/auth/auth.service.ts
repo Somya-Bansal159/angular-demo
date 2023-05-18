@@ -32,7 +32,15 @@ export class AuthService {
                 returnSecureToken: true
             }
         )
-        .pipe(catchError(this.handleError), tap(this.handleAuthentication));
+        .pipe(
+            catchError(this.handleError), 
+            tap(resData => {
+                    this.handleAuthentication(
+                        resData.email, resData.idToken, resData.localId, resData.expiresIn
+                    )
+                }
+            )
+        );
     }
 
     login(email: string, password: string) {
@@ -44,7 +52,18 @@ export class AuthService {
                 returnSecureToken: true
             }
         )
-        .pipe(catchError(this.handleError), tap(this.handleAuthentication.bind(this)));
+        .pipe(
+            catchError(this.handleError), 
+            tap(resData => {
+                    this.handleAuthentication(
+                        resData.email, 
+                        resData.idToken, 
+                        resData.localId, 
+                        resData.expiresIn
+                    )
+                }
+            )
+        );
     }
 
     logout() {
@@ -90,18 +109,18 @@ export class AuthService {
         }
     }
 
-    private handleAuthentication(resData: AuthResponseData) {
+    private handleAuthentication(email:string, idToken:string, localId:string, expiresIn:string) {
         const expirationDate = new Date(
-            new Date().getTime() + (+resData.expiresIn)*1000
+            new Date().getTime() + (+expiresIn)*1000
         );
         const user = new User(
-            resData.email, 
-            resData.localId, 
-            resData.idToken, 
+            email, 
+            localId, 
+            idToken, 
             expirationDate
         );
         this.user.next(user);
-        this.autoLogout(+resData.expiresIn * 1000);
+        this.autoLogout(+expiresIn * 1000);
         localStorage.setItem('userData', JSON.stringify(user));
     }
 
